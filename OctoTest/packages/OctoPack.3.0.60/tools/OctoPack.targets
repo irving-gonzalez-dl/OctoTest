@@ -22,7 +22,7 @@
     <OctoPackAppendToPackageId Condition="'$(OctoPackAppendToPackageId)' == ''"></OctoPackAppendToPackageId>
     <OctoPackAppendToVersion Condition="'$(OctoPackAppendToVersion)' == ''"></OctoPackAppendToVersion>
     <OctoPackReleaseNotesFile Condition="'$(OctoPackReleaseNotesFile)' == ''"></OctoPackReleaseNotesFile>
-    <OctoPackNuGetExePath Condition="'$(OctoPackNuGetExePath)' == ''">$(MSBuildThisFileDirectory)nuget.exe</OctoPackNuGetExePath>
+    <OctoPackNuGetExePath Condition="'$(OctoPackNuGetExePath)' == ''"></OctoPackNuGetExePath>
     <OctoPackPublishPackageToFileShare Condition="'$(OctoPackPublishPackageToFileShare)' == ''"></OctoPackPublishPackageToFileShare>
     <OctoPackPublishPackageToHttp Condition="'$(OctoPackPublishPackageToHttp)' == ''"></OctoPackPublishPackageToHttp>
     <OctoPackPublishApiKey Condition="'$(OctoPackPublishApiKey)' == ''"></OctoPackPublishApiKey>
@@ -36,15 +36,13 @@
     <OctoPackIgnoreNonRootScripts Condition="'$(OctoPackIgnoreNonRootScripts)' == ''">false</OctoPackIgnoreNonRootScripts>
     <OctoPackAppConfigFileOverride Condition="'$(OctoPackAppConfigFileOverride)' == ''">$(TargetDir)$(TargetFileName).config</OctoPackAppConfigFileOverride>
     <OctoPackAppendProjectToFeed Condition="'$(OctoPackAppendProjectToFeed)' == ''">false</OctoPackAppendProjectToFeed>
-    <OctoPackUseFileVersion Condition="'$(OctoPackUseFileVersion)' == ''">false</OctoPackUseFileVersion>
-    <OctoPackUseProductVersion Condition="'$(OctoPackUseProductVersion)' == ''">false</OctoPackUseProductVersion>
   </PropertyGroup>
 
   <!-- 
   Create Octopus Deploy package
   -->
   <Target Name="OctoPack" Condition="$(RunOctoPack)">
-    <GetAssemblyVersionInfo UseFileVersion="$(OctoPackUseFileVersion)" UseProductVersion="$(OctoPackUseProductVersion)" AssemblyFiles="$(TargetPath)" Condition="'$(OctoPackPackageVersion)' == ''">
+    <GetAssemblyVersionInfo AssemblyFiles="$(TargetPath)" Condition="'$(OctoPackPackageVersion)' == ''">
       <Output TaskParameter="AssemblyVersionInfo" ItemName="AssemblyVersions"/>
     </GetAssemblyVersionInfo>
     <PropertyGroup>
@@ -106,6 +104,6 @@
     <Copy SourceFiles="@(OctoPackBuiltPackages)" DestinationFolder="$(OctoPackPublishPackageToFileShare)" Condition="'$(OctoPackPublishPackageToFileShare)' != ''" />
 
     <Message Text="Publish to repository: $(OctoPackPublishPackageToHttp)" Condition="'$(OctoPackPublishPackageToHttp)' != ''" Importance="Normal" />
-    <Exec Command='"$(OctoPackNuGetExePath)" push "@(OctoPackBuiltPackages)" $(OctoPackPublishApiKey) -Source $(OctoPackPublishPackageToHttp) $(OctoPackNuGetPushProperties)' Condition="'$(OctoPackPublishPackageToHttp)' != ''" />
+    <Exec Command='"$(OctoPackNuGetExePath)" push "@(OctoPackBuiltPackages)" $(OctoPackPublishApiKey) -s $(OctoPackPublishPackageToHttp) $(OctoPackNuGetPushProperties)' Condition="'$(OctoPackPublishPackageToHttp)' != ''" />
   </Target>
 </Project>
